@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Task from './task';
 import './taskList.css';
 
-const TaskList = ({ todos, deleteTask, completeTask, stateFilter }) => {
+const TaskList = ({ todos, deleteTask, completeTask, stateFilter, changeTask, changeLabelTask }) => {
   TaskList.defaultProps = {
     todos: {},
     completeTask: () => {},
@@ -31,7 +31,13 @@ const TaskList = ({ todos, deleteTask, completeTask, stateFilter }) => {
     .map((el) => {
       return (
         <li className={el.done ? 'completed' : 'active'} key={el.id}>
-          <Task deleteTask={() => deleteTask(el.id)} completeTask={() => completeTask(el.id)} todos={el} />
+          <Task
+            deleteTask={() => deleteTask(el.id)}
+            completeTask={() => completeTask(el.id)}
+            todos={el}
+            changeTask={changeTask}
+            changeLabelTask={changeLabelTask}
+          />
         </li>
       );
     });

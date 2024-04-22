@@ -17,13 +17,46 @@ class App extends React.Component {
     };
   };
 
+  changeTask = (e) => {
+    let current = e.target.previousSibling.querySelector('input');
+    let currentHiden = e.target.previousSibling.querySelector('span');
+    current.classList.toggle('hidden');
+    currentHiden.classList.toggle('hidden');
+    return this.setState({
+      dom: { current, currentHiden },
+    });
+  };
+
+  changeLabelTask = (label, id) => {
+    this.setState(({ todoData, dom }) => {
+      const idx = todoData.findIndex((el) => el.id === id);
+      const oldItem = todoData[idx];
+      const newItem = oldItem;
+      newItem.label = label;
+      let newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+      let current = dom.current.classList.add('hidden');
+      let currentHiden = dom.currentHiden.classList.remove('hidden');
+      return {
+        todoData: newArr,
+        dom: { current, currentHiden },
+      };
+    });
+  };
+
   changeFilter = (e) => {
+    document.querySelectorAll('button').forEach((item) => {
+      if (e.target == e.Currenttarget) {
+        return;
+      } else {
+        item.classList.remove('selected');
+      }
+    });
     e.target.classList.toggle('selected');
+
     if (e.target.textContent === 'All') {
       this.setState({
         filter: undefined,
       });
-      this.filter = undefined;
     } else if (e.target.textContent === 'Active') {
       this.setState({
         filter: true,
@@ -36,12 +69,7 @@ class App extends React.Component {
   };
 
   state = {
-    todoData: [
-      this.createTodoitem('Complete Tak'),
-      this.createTodoitem('Editing Task'),
-      this.createTodoitem('Active Task'),
-    ],
-
+    todoData: [],
     filter: undefined,
   };
 
@@ -59,7 +87,7 @@ class App extends React.Component {
   deleteTask = (id) => {
     this.setState(({ todoData }) => {
       let idx = todoData.findIndex((el) => el.id === id);
-      let newArray = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+      let newArray = [...todoData.slice(0, idx), ...todoData.slice(-1)];
       return { todoData: newArray };
     });
   };
@@ -97,6 +125,8 @@ class App extends React.Component {
           clearDone={this.clearCompleted}
           filter={this.changeFilter}
           stateFilter={this.state.filter}
+          changeTask={this.changeTask}
+          changeLabelTask={this.changeLabelTask}
         />
       </section>
     );
