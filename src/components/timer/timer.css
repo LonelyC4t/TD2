@@ -1,0 +1,34 @@
+.timer{
+	display: flex;
+	justify-content: space-around;
+	align-items: center;	
+}
+.time{
+	font-size: 13px;
+    color: gray;
+	margin-top: 5px;
+}
+.iconPause,
+.iconPlay {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	
+}
+.iconPlay{
+	color: #cc9a9a;
+	margin-right: 5px;
+}
+.iconPlay:hover {
+	color: #af5b5e;
+}
+.iconPlay:after {
+	content: '▶';
+}
+.iconPause{
+	margin-right: 10px;
+	margin-bottom: 4px;
+}
+.iconPause:after {
+	content: '⏸';
+}
