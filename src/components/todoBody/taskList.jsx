@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Task from './task';
 import './taskList.css';
 
-const TaskList = ({ todos, deleteTask, completeTask, stateFilter, changeTask, changeLabelTask }) => {
+const TaskList = ({ todos, deleteTask, completeTask, stateFilter, changeTask, changeLabelTask, onTickTimer }) => {
   TaskList.defaultProps = {
     todos: {},
     completeTask: () => {},
@@ -32,10 +32,11 @@ const TaskList = ({ todos, deleteTask, completeTask, stateFilter, changeTask, ch
       return (
         <li className={el.done ? 'completed' : 'active'} key={el.id}>
           <Task
+            onTickTimer={() => onTickTimer(el.id)}
             deleteTask={() => deleteTask(el.id)}
             completeTask={() => completeTask(el.id)}
             todos={el}
-            changeTask={changeTask}
+            changeTask={() => changeTask(el.id)}
             changeLabelTask={changeLabelTask}
           />
         </li>

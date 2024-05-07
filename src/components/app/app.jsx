@@ -14,6 +14,8 @@ class App extends React.Component {
       id: this.maxId++,
       done: false,
       createTime: new Date(),
+      min: 0,
+      sec: 0,
     };
   };
 
@@ -114,11 +116,31 @@ class App extends React.Component {
     });
   };
 
+  onTickTimer = (id) => {
+    this.setState(({ todoData }) => {
+      let idx = todoData.findIndex((el) => el.id === id);
+      let oldItem = todoData[idx];
+      let newItem = {};
+      if (oldItem.sec >= 59) {
+        newItem = { ...oldItem, sec: 0, min: oldItem.min + 1 };
+      } else {
+        newItem = { ...oldItem, sec: oldItem.sec + 1 };
+      }
+
+      let newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+
+      return {
+        todoData: newArray,
+      };
+    });
+  };
+
   render() {
     return (
       <section className="todoapp">
         <Header addTask={this.addTask} />
         <TodoBody
+          onTickTimer={this.onTickTimer}
           deleteTask={this.deleteTask}
           completeTask={this.completeTask}
           todos={this.state.todoData}

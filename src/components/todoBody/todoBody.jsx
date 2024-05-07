@@ -3,10 +3,21 @@ import FooterTodo from '../footerTodo/footerTodo';
 import TaskList from './taskList';
 import './todoBody.css';
 
-const TodoBody = ({ todos, deleteTask, completeTask, clearDone, filter, stateFilter, changeTask, changeLabelTask }) => {
+const TodoBody = ({
+  todos,
+  deleteTask,
+  completeTask,
+  clearDone,
+  filter,
+  stateFilter,
+  changeTask,
+  changeLabelTask,
+  onTickTimer,
+}) => {
   return (
     <section className="main">
       <TaskList
+        onTickTimer={onTickTimer}
         deleteTask={deleteTask}
         todos={todos}
         completeTask={completeTask}

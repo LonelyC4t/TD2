@@ -1,14 +1,13 @@
 /* eslint-disable */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { formatDistanceToNow } from 'date-fns';
+import PropTypes from 'prop-types';
+import React from 'react';
 import Taimer from '../timer/timer';
 import './task.css';
 
 class Task extends React.Component {
   state = {
     label: this.props.todos.label,
-    timeOnTask: 0,
   };
 
   onChange = (e) => {
@@ -21,7 +20,6 @@ class Task extends React.Component {
     e.preventDefault();
     this.props.changeLabelTask(this.state.label, this.props.todos.id);
   };
-
 
   static defaultProps = {
     todos: {},
@@ -45,7 +43,7 @@ class Task extends React.Component {
             <span onClick={completeTask} className="description">
               {todos.label}
             </span>
-            <Taimer />
+            <Taimer sec={this.props.todos.sec} min={this.props.todos.min} onTick={this.props.onTickTimer} />
             <form onSubmit={this.onSubmit}>
               <input type="text" onChange={this.onChange} className="editing hidden" defaultValue={todos.label} />
             </form>
