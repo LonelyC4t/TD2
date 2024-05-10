@@ -9,7 +9,7 @@ export default class Timer extends React.Component {
       clearInterval: null,
     };
       start = () => {
-        if(!this.state.clearInterval) {
+        if(this.state.clearInterval == null) {
           const timerId = setInterval(this.props.onTick, 1000);
         this.setState({
           clearInterval: timerId,
@@ -18,11 +18,11 @@ export default class Timer extends React.Component {
       };
       stop = () => {
         clearInterval(this.state.clearInterval);
+        this.setState({
+          clearInterval: null,
+        });
       };
-      componentWillUnmount() {
-        this.stop();
-        clearInterval(this.state.clearInterval);
-      }
+      
       componentDidMount() {
         this.setState({
           sec: this.props.sec,
@@ -30,6 +30,7 @@ export default class Timer extends React.Component {
         });
       };
     render() {
+      console.log(this.state.clearInterval);
         return (
             <span className="timer">
             <button onClick={this.start} className="iconPlay"></button>
