@@ -1,66 +1,40 @@
 /* eslint-disable */
-import React from "react";
 import './timer.css';
+import React from 'react';
 
 export default class Timer extends React.Component {
-
-    state = {
-        sec: 0,
-        min: 0,
-        clearInterval: null,
-        currentTime: {
-            sec: 0,
-            min: 0
-        }
+  state = {
+      sec: this.props.sec,
+      min: this.props.min,
+      clearInterval: null,
     };
-    tic = () => {
-        if(this.state.sec >= 59) {
-            this.setState((prevState) => ({
-                sec: -1,
-                min: prevState.min + 1,
-            }));
-        };
-        this.setState((prevState) => ({
-            sec: prevState.sec + 1,
-        }));
-    };
-    start = () => {
-        const timerId = setInterval(this.tic, 1000);
+      start = () => {
+        if(!this.state.clearInterval) {
+          const timerId = setInterval(this.props.onTick, 1000);
         this.setState({
-            clearInterval: timerId,
+          clearInterval: timerId,
         });
-    };
-    stop = () => {
+        }
+      };
+      stop = () => {
         clearInterval(this.state.clearInterval);
-    };
-    componentWillUnmount() {
-       this.stop()
-        let second = this.state.sec;
-        let minute = this.state.min;
-        console.log(minute, second);
-        this.setState(({
-            currentTime: {
-                sec: second, 
-                min: 5, 
-            }
-        }), () => console.log(this.state.currentTime));
-
-    };
-    componentDidMount(){
-
+      };
+      componentWillUnmount() {
+        this.stop();
+        clearInterval(this.state.clearInterval);
+      }
+      componentDidMount() {
         this.setState({
-            sec: this.state.currentTime.sec,
-            min: this.state.currentTime.min,
-        })
-    };
-    
+          sec: this.props.sec,
+          min: this.props.min,
+        });
+      };
     render() {
-        
         return (
             <span className="timer">
-              <button onClick={this.start} className="iconPlay"></button>
-              <button  onClick={this.stop} className="iconPause"></button>
-              <span className="time"> {`${this.state.min}:${this.state.sec <= 9 ? 0 : ""}${this.state.sec}`} </span>
+            <button onClick={this.start} className="iconPlay"></button>
+            <button onClick={this.stop} className="iconPause"></button>
+            <span className="time"> {`${this.props.min}:${this.props.sec <= 9 ? 0 : ''}${this.props.sec}`}</span>
             </span>
         );
     };

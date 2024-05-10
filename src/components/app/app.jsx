@@ -8,12 +8,14 @@ class App extends React.Component {
   filter = true;
   maxId = 100;
 
-  createTodoitem = (label) => {
+  createTodoitem = (label, min, sec) => {
     return {
       label,
       id: this.maxId++,
       done: false,
       createTime: new Date(),
+      min,
+      sec,
     };
   };
 
@@ -73,8 +75,18 @@ class App extends React.Component {
     filter: undefined,
   };
 
-  addTask = (label) => {
-    let newItem = this.createTodoitem(label);
+  addTask = (label, min, sec) => {
+    if (sec > 60) sec = 59;
+    if (sec < 0) sec = 0;
+    if (min < 0) min = 0;
+    if (min.length > 1) min = min.slice(0, 2);
+    if (isNaN(min) || isNaN(sec)) {
+      min = 0;
+      sec = 0;
+    }
+    if (min == '') min = 0;
+    if (sec == '') sec = 0;
+    let newItem = this.createTodoitem(label, min, sec);
     this.setState(({ todoData }) => {
       let newArr = [...todoData, newItem];
 
@@ -113,12 +125,38 @@ class App extends React.Component {
       };
     });
   };
+  onTickTimer = (id) => {
+    this.setState(({ todoData }) => {
+      let idx = todoData.findIndex((el) => el.id === id);
+      let oldItem = todoData[idx];
+      let newItem = {};
+      if (oldItem.min == 0 && oldItem.sec == 0) {
+        newItem = { ...oldItem, min: 0, sec: 0 };
+        let newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+        return {
+          todoData: newArray,
+        };
+      }
 
+      if (oldItem.sec == 0) {
+        newItem = { ...oldItem, sec: 59, min: oldItem.min - 1 };
+      } else {
+        newItem = { ...oldItem, sec: oldItem.sec - 1 };
+      }
+
+      let newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+
+      return {
+        todoData: newArray,
+      };
+    });
+  };
   render() {
     return (
       <section className="todoapp">
         <Header addTask={this.addTask} />
         <TodoBody
+          onTickTimer={this.onTickTimer}
           deleteTask={this.deleteTask}
           completeTask={this.completeTask}
           todos={this.state.todoData}
