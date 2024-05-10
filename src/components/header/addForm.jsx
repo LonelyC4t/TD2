@@ -42,7 +42,7 @@ class AddForm extends React.Component {
           value={this.state.min}
           className="new-todo__time"
           placeholder="min"
-          type="text"
+          type="number"
         />
         <input
           name="sec"
@@ -50,7 +50,7 @@ class AddForm extends React.Component {
           value={this.state.sec}
           className="new-todo__time"
           placeholder="sec"
-          type="text"
+          type="number"
         />
         <button type="submit"> </button>
       </form>
