@@ -44,7 +44,13 @@ class Task extends React.Component {
             <span onClick={completeTask} className="description">
               {todos.label}
             </span>
-            <Taimer sec={this.props.todos.sec} min={this.props.todos.min} onTick={this.props.onTickTimer} />
+            <Taimer
+              deleteInterval={this.props.deleteInterval}
+              sec={this.props.todos.sec}
+              min={this.props.todos.min}
+              done={this.props.todos.done}
+              onTick={this.props.onTickTimer}
+            />
             <form onSubmit={this.onSubmit}>
               <input type="text" onChange={this.onChange} className="editing hidden" defaultValue={todos.label} />
             </form>

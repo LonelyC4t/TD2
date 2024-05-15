@@ -80,10 +80,6 @@ class App extends React.Component {
     if (sec < 0) sec = 0;
     if (min < 0) min = 0;
     if (min.length > 1) min = min.slice(0, 2);
-    if (isNaN(min) || isNaN(sec)) {
-      min = 0;
-      sec = 0;
-    }
     if (min == '') min = 0;
     if (sec == '') sec = 0;
     let newItem = this.createTodoitem(label, min, sec);
@@ -95,7 +91,11 @@ class App extends React.Component {
       };
     });
   };
-
+  deleteInterval = (idInt) => {
+    this.setState({
+      interval_id: idInt,
+    });
+  };
   deleteTask = (id) => {
     this.setState(({ todoData }) => {
       let idx = todoData.findIndex((el) => el.id === id);
@@ -165,6 +165,7 @@ class App extends React.Component {
           stateFilter={this.state.filter}
           changeTask={this.changeTask}
           changeLabelTask={this.changeLabelTask}
+          deleteInterval={this.deleteInterval}
         />
       </section>
     );

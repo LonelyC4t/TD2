@@ -13,10 +13,12 @@ const TodoBody = ({
   changeTask,
   changeLabelTask,
   onTickTimer,
+  deleteInterval,
 }) => {
   return (
     <section className="main">
       <TaskList
+        deleteInterval={deleteInterval}
         onTickTimer={onTickTimer}
         deleteTask={deleteTask}
         todos={todos}
