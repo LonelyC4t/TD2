@@ -30,6 +30,9 @@ export default class Timer extends React.Component {
   componentWillUnmount() {
     if (this.props.done) {
       this.stop();
+    } else {
+      this.props.deleteInterval(this.state.interval_id);
+      console.log('else');
     }
   }
   render() {

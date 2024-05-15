@@ -92,11 +92,15 @@ class App extends React.Component {
     });
   };
   deleteInterval = (idInt) => {
+    console.log(idInt);
     this.setState({
       interval_id: idInt,
     });
   };
   deleteTask = (id) => {
+    this.completeTask(id);
+    console.log(this.state.interval_id);
+    clearInterval(this.state.interval_id);
     this.setState(({ todoData }) => {
       let idx = todoData.findIndex((el) => el.id === id);
       let newArray = [...todoData.slice(0, idx), ...todoData.slice(-1)];
@@ -130,6 +134,10 @@ class App extends React.Component {
       let idx = todoData.findIndex((el) => el.id === id);
       let oldItem = todoData[idx];
       let newItem = {};
+
+      if (!oldItem && !oldItem) {
+        return;
+      }
       if (oldItem.min == 0 && oldItem.sec == 0) {
         newItem = { ...oldItem, min: 0, sec: 0 };
         let newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
