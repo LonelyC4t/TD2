@@ -1,51 +1,67 @@
 import React from 'react';
+import { useState, useCallback } from 'react';
 
 import Header from '../header/header';
 import TodoBody from '../todoBody/todoBody';
+
 import './app.css';
 
-class App extends React.Component {
-  filter = true;
-  maxId = 100;
-
-  createTodoitem = (label, min, sec) => {
+const App = () => {
+  const createTodoitem = (label, min, sec) => {
     return {
       label,
-      id: this.maxId++,
+      id: Math.random(),
       done: false,
       createTime: new Date(),
       min,
       sec,
     };
   };
-
-  changeTask = (e) => {
+  // eslint-disable-next-line no-unused-vars
+  const [dom, setDom] = useState();
+  const changeTask = (e) => {
     let current = e.target.previousSibling.querySelector('input');
     let currentHiden = e.target.previousSibling.querySelector('span');
     current.classList.toggle('hidden');
     currentHiden.classList.toggle('hidden');
-    return this.setState({
-      dom: { current, currentHiden },
-    });
-  };
 
-  changeLabelTask = (label, id) => {
-    this.setState(({ todoData, dom }) => {
-      const idx = todoData.findIndex((el) => el.id === id);
-      const oldItem = todoData[idx];
+    return setDom({ current, currentHiden });
+  };
+  const [todoData, setTodoData] = useState([]);
+
+  const changeLabelTask = (label, id) => {
+    setTodoData((prev) => {
+      const idx = prev.findIndex((el) => el.id === id);
+      const oldItem = prev[idx];
       const newItem = oldItem;
       newItem.label = label;
-      let newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-      let current = dom.current.classList.add('hidden');
-      let currentHiden = dom.currentHiden.classList.remove('hidden');
-      return {
-        todoData: newArr,
-        dom: { current, currentHiden },
-      };
+      let newArr = [...prev.slice(0, idx), newItem, ...prev.slice(idx + 1)];
+      return newArr;
+    });
+    setDom((prev) => {
+      let current = prev.current.classList.add('hidden');
+      let currentHiden = prev.currentHiden.classList.remove('hidden');
+      return { current, currentHiden };
     });
   };
 
-  changeFilter = (e) => {
+  const addTask = (label, min, sec) => {
+    if (sec > 60) sec = 59;
+    if (sec < 0) sec = 0;
+    if (min < 0) min = 0;
+    if (min.length > 1) min = min.slice(0, 2);
+    if (min == '') min = 0;
+    if (sec == '') sec = 0;
+    let newItem = createTodoitem(label, min, sec);
+
+    setTodoData((prevTodoData) => {
+      let newArr = [...prevTodoData, newItem];
+      return newArr;
+    });
+  };
+  const [filter, setFilter] = useState(undefined);
+
+  const changeFilter = (e) => {
     document.querySelectorAll('button').forEach((item) => {
       if (e.target == e.Currenttarget) {
         return;
@@ -56,128 +72,82 @@ class App extends React.Component {
     e.target.classList.toggle('selected');
 
     if (e.target.textContent === 'All') {
-      this.setState({
-        filter: undefined,
-      });
+      setFilter(undefined);
     } else if (e.target.textContent === 'Active') {
-      this.setState({
-        filter: true,
-      });
+      setFilter(true);
     } else if (e.target.textContent === 'Completed') {
-      this.setState({
-        filter: false,
-      });
+      setFilter(false);
     }
   };
-
-  state = {
-    todoData: [],
-    filter: undefined,
+  const [interval_id, setInterval_id] = useState(null);
+  const deleteInterval = (idInt) => {
+    setInterval_id(idInt);
   };
-
-  addTask = (label, min, sec) => {
-    if (sec > 60) sec = 59;
-    if (sec < 0) sec = 0;
-    if (min < 0) min = 0;
-    if (min.length > 1) min = min.slice(0, 2);
-    if (min == '') min = 0;
-    if (sec == '') sec = 0;
-    let newItem = this.createTodoitem(label, min, sec);
-    this.setState(({ todoData }) => {
-      let newArr = [...todoData, newItem];
-
-      return {
-        todoData: newArr,
-      };
-    });
-  };
-  deleteInterval = (idInt) => {
-    console.log(idInt);
-    this.setState({
-      interval_id: idInt,
-    });
-  };
-  deleteTask = (id) => {
-    this.completeTask(id);
-    console.log(this.state.interval_id);
-    clearInterval(this.state.interval_id);
-    this.setState(({ todoData }) => {
-      let idx = todoData.findIndex((el) => el.id === id);
-      let newArray = [...todoData.slice(0, idx), ...todoData.slice(-1)];
-      return { todoData: newArray };
+  const deleteTask = (id) => {
+    completeTask(id);
+    clearInterval(interval_id);
+    setTodoData((prev) => {
+      let idx = prev.findIndex((el) => el.id === id);
+      let newArray = [...prev.slice(0, idx), ...prev.slice(-1)];
+      return newArray;
     });
   };
 
-  clearCompleted = () => {
-    let newArr = this.state.todoData.filter((el) => !el.done);
-
-    this.setState({
-      todoData: newArr,
-    });
+  const clearCompleted = () => {
+    let newArr = todoData.filter((el) => !el.done);
+    setTodoData(newArr);
   };
 
-  completeTask = (id) => {
-    this.setState(({ todoData }) => {
-      let idx = todoData.findIndex((el) => el.id === id);
-      let oldItem = todoData[idx];
+  const completeTask = (id) => {
+    setTodoData((prev) => {
+      let idx = prev.findIndex((el) => el.id === id);
+      let oldItem = prev[idx];
       let newItem = { ...oldItem, done: !oldItem.done };
-
-      let newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-
-      return {
-        todoData: newArray,
-      };
+      let newArray = [...prev.slice(0, idx), newItem, ...prev.slice(idx + 1)];
+      return newArray;
     });
   };
-  onTickTimer = (id) => {
-    this.setState(({ todoData }) => {
-      let idx = todoData.findIndex((el) => el.id === id);
-      let oldItem = todoData[idx];
-      let newItem = {};
 
-      if (!oldItem && !oldItem) {
-        return;
-      }
-      if (oldItem.min == 0 && oldItem.sec == 0) {
-        newItem = { ...oldItem, min: 0, sec: 0 };
-        let newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-        return {
-          todoData: newArray,
-        };
-      }
+  const onTickTimer = useCallback(
+    (id) => {
+      setTodoData((prevTodoData) =>
+        prevTodoData.map((item) => {
+          if (item.id !== id) {
+            return item;
+          }
 
-      if (oldItem.sec == 0) {
-        newItem = { ...oldItem, sec: 59, min: oldItem.min - 1 };
-      } else {
-        newItem = { ...oldItem, sec: oldItem.sec - 1 };
-      }
+          let newItem;
+          if (item.min === 0 && item.sec === 0) {
+            newItem = { ...item, min: 0, sec: 0 };
+          } else if (item.sec === 0) {
+            newItem = { ...item, sec: 59, min: item.min - 1 };
+          } else {
+            newItem = { ...item, sec: item.sec - 1 };
+          }
 
-      let newArray = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
+          return newItem;
+        })
+      );
+    },
+    [setTodoData]
+  );
 
-      return {
-        todoData: newArray,
-      };
-    });
-  };
-  render() {
-    return (
-      <section className="todoapp">
-        <Header addTask={this.addTask} />
-        <TodoBody
-          onTickTimer={this.onTickTimer}
-          deleteTask={this.deleteTask}
-          completeTask={this.completeTask}
-          todos={this.state.todoData}
-          clearDone={this.clearCompleted}
-          filter={this.changeFilter}
-          stateFilter={this.state.filter}
-          changeTask={this.changeTask}
-          changeLabelTask={this.changeLabelTask}
-          deleteInterval={this.deleteInterval}
-        />
-      </section>
-    );
-  }
-}
-
+  return (
+    <section className="todoapp">
+      <Header addTask={addTask} />
+      <TodoBody
+        onTickTimer={onTickTimer}
+        deleteTask={deleteTask}
+        completeTask={completeTask}
+        todos={todoData}
+        clearDone={clearCompleted}
+        filter={changeFilter}
+        stateFilter={filter}
+        changeTask={changeTask}
+        changeLabelTask={changeLabelTask}
+        deleteInterval={deleteInterval}
+      />
+    </section>
+  );
+};
 export default App;

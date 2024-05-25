@@ -1,61 +1,58 @@
 import './addForm.css';
-import React from 'react';
+import React, { useState } from 'react';
 
-class AddForm extends React.Component {
-  state = {
+const AddForm = ({ addTask }) => {
+  const [task, setTask] = useState({
     label: '',
     min: '',
     sec: '',
-  };
-
-  onChange = (e) => {
+  });
+  const onChange = (e) => {
     let name = e.target.name;
-    this.setState({
-      [name]: e.target.value,
+    setTask((prev) => {
+      return { ...prev, [name]: e.target.value };
     });
   };
-  onSubmit = (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-    if (this.state.label.length === 0) {
+    if (task.label.length === 0) {
       return;
-    } else if (this.state.label.trim().length === 0) {
-      this.setState({ label: '', min: '', sec: '' });
-    } else if (this.state.label.length > 0) {
-      this.props.addTask(this.state.label, this.state.min, this.state.sec);
-      this.setState({ label: '', min: '', sec: '' });
+    }
+    if (task.label.trim().length === 0) {
+      return setTask({ label: '', min: '', sec: '' });
+    }
+    if (task.label.length > 0) {
+      addTask(task.label, task.min, task.sec), setTask({ label: '', min: '', sec: '' });
     }
   };
-  render() {
-    return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          name="label"
-          value={this.state.label}
-          onChange={this.onChange}
-          className="new-todo"
-          placeholder="What needs to be don3 ?"
-          type="text"
-        />
-        <input
-          name="min"
-          onChange={this.onChange}
-          value={this.state.min}
-          className="new-todo__time"
-          placeholder="min"
-          type="number"
-        />
-        <input
-          name="sec"
-          onChange={this.onChange}
-          value={this.state.sec}
-          className="new-todo__time"
-          placeholder="sec"
-          type="number"
-        />
-        <button type="submit"> </button>
-      </form>
-    );
-  }
-}
-
+  return (
+    <form onSubmit={onSubmit}>
+      <input
+        name="label"
+        value={task.label}
+        onChange={onChange}
+        className="new-todo"
+        placeholder="What needs to be don3 ?"
+        type="text"
+      />
+      <input
+        name="min"
+        onChange={onChange}
+        value={task.min}
+        className="new-todo__time"
+        placeholder="min"
+        type="number"
+      />
+      <input
+        name="sec"
+        onChange={onChange}
+        value={task.sec}
+        className="new-todo__time"
+        placeholder="sec"
+        type="number"
+      />
+      <button type="submit"> </button>
+    </form>
+  );
+};
 export default AddForm;

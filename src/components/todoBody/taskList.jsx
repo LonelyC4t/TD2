@@ -26,7 +26,6 @@ const TaskList = ({
     deleteTask: PropTypes.func.isRequired,
     stateFilter: PropTypes.oneOf([true, false, undefined]),
   };
-
   let elementTask = todos
     .filter((el) => {
       if (stateFilter === true) {

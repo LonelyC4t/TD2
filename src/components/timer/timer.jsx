@@ -1,47 +1,48 @@
 import './timer.css';
-import React from 'react';
-export default class Timer extends React.Component {
-  state = {
-    sec: this.props.sec,
-    min: this.props.min,
-    interval_id: null,
-  };
-  start = () => {
-    if (this.state.interval_id == null) {
-      const timerId = setInterval(() => this.props.onTick(this.state.interval_id), 1000);
-      this.setState({
-        interval_id: timerId,
-      });
+import React, { useEffect, useState } from 'react';
+
+const Timer = ({ deleteInterval, sec, min, done, onTick }) => {
+  // eslint-disable-next-line no-unused-vars
+  const [time, setTime] = useState({
+    min,
+    sec,
+  });
+  const [interval_id, setInterval_id] = useState(null);
+
+  const start = () => {
+    if (interval_id == null) {
+      const timerId = setInterval(() => onTick(interval_id), 1000);
+      setInterval_id(timerId);
     }
-  };
-  stop = () => {
-    clearInterval(this.state.interval_id);
-    this.setState({
-      interval_id: null,
-    });
   };
 
-  componentDidMount() {
-    this.setState({
-      sec: this.props.sec,
-      min: this.props.min,
+  const stop = () => {
+    clearInterval(interval_id);
+    setInterval_id(null);
+  };
+
+  useEffect(() => {
+    setTime({
+      sec,
+      min,
     });
-  }
-  componentWillUnmount() {
-    if (this.props.done) {
-      this.stop();
-    } else {
-      this.props.deleteInterval(this.state.interval_id);
-      console.log('else');
+  }, []);
+
+  useEffect(() => {
+    if (done) {
+      return stop();
     }
-  }
-  render() {
-    return (
-      <span className="timer">
-        <button onClick={this.start} className="iconPlay"></button>
-        <button onClick={this.stop} className="iconPause"></button>
-        <span className="time"> {`${this.props.min}:${this.props.sec <= 9 ? 0 : ''}${this.props.sec}`}</span>
-      </span>
-    );
-  }
-}
+    if (!done) {
+      return deleteInterval(interval_id);
+    }
+  }, [done]);
+
+  return (
+    <span className="timer">
+      <button onClick={start} className="iconPlay"></button>
+      <button onClick={stop} className="iconPause"></button>
+      <span className="time"> {`${min}:${sec <= 9 ? 0 : ''}${sec}`}</span>
+    </span>
+  );
+};
+export default Timer;
