@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import Header from '../header/header';
 import TodoBody from '../todoBody/todoBody';
